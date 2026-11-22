@@ -1,0 +1,1524 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloom Typing Studio</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
+
+:root {
+    --bg: #fff7f5;
+    --card: #ffffff;
+    --text: #483a40;
+    --muted: #a18a94;
+    --primary: #d77b9b;
+    --primary-dark: #bf6284;
+    --border: #f1dce3;
+    --soft: #fff0f4;
+    --soft2: #f9e8ee;
+    --green: #609c78;
+    --red: #db6a6a;
+    --shadow: 0 12px 40px rgba(168, 111, 136, 0.09);
+}
+
+body.dark {
+    --bg: #211b23;
+    --card: #2d2530;
+    --text: #f7eaf0;
+    --muted: #bca8b8;
+    --primary: #e69ab7;
+    --primary-dark: #d27f9f;
+    --border: #493849;
+    --soft: #392d3a;
+    --soft2: #443347;
+    --green: #94d0a7;
+    --red: #f09898;
+    --shadow: 0 12px 40px rgba(0,0,0,0.18);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    transition: background 0.3s, color 0.3s;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 10% 10%, rgba(255,190,211,0.18), transparent 28%),
+        radial-gradient(circle at 90% 85%, rgba(214,188,235,0.18), transparent 28%);
+}
+
+button, select, input, textarea {
+    font-family: inherit;
+}
+
+button {
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+button:hover {
+    transform: translateY(-2px);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.page {
+    max-width: 1150px;
+    margin: auto;
+    padding: 25px 22px 45px;
+}
+
+/* HEADER */
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+    gap: 15px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-icon {
+    width: 47px;
+    height: 47px;
+    background: var(--soft2);
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    font-size: 24px;
+}
+
+.brand h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+}
+
+.brand p {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1.5px;
+}
+
+.theme-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 11px 15px;
+    border-radius: 30px;
+    font-size: 14px;
+}
+
+/* HERO */
+
+.hero {
+    text-align: center;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.hero .tag {
+    color: var(--primary-dark);
+    background: var(--soft);
+    padding: 8px 15px;
+    border-radius: 30px;
+    font-size: 11px;
+    display: inline-block;
+    letter-spacing: 1.4px;
+    margin-bottom: 15px;
+}
+
+.hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 5vw, 52px);
+    margin-bottom: 10px;
+}
+
+.hero h1 span {
+    color: var(--primary);
+}
+
+.hero p {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+/* TULIPS */
+
+.tulips {
+    position: absolute;
+    font-size: 36px;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.tulips.left {
+    left: 2%;
+    top: 5px;
+}
+
+.tulips.right {
+    right: 2%;
+    top: 5px;
+}
+
+/* CARDS */
+
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 25px;
+    box-shadow: var(--shadow);
+    padding: 25px;
+    transition: background 0.3s;
+}
+
+.settings {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 20px;
+}
+
+.setting label {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 9px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.setting select,
+.setting input {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 13px;
+    outline: none;
+    color: var(--text);
+    background: var(--soft);
+}
+
+.setting select:focus,
+.setting input:focus {
+    border-color: var(--primary);
+}
+
+/* STATS */
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 13px;
+    margin-bottom: 20px;
+}
+
+.stat {
+    background: var(--soft);
+    border-radius: 18px;
+    padding: 18px;
+    text-align: center;
+}
+
+.stat .number {
+    color: var(--primary);
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.stat .label {
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* PROGRESS */
+
+.progress-wrap {
+    width: 100%;
+    height: 7px;
+    background: var(--soft2);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #f1a7c1, #c99be2);
+    border-radius: 10px;
+    transition: width 0.15s;
+}
+
+/* PASSAGE */
+
+.passage-card {
+    background: var(--soft);
+    padding: 25px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    margin-bottom: 18px;
+}
+
+.passage-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 18px;
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.passage {
+    font-size: 19px;
+    line-height: 2.15;
+    letter-spacing: 0.3px;
+    color: #b9aab0;
+    overflow-wrap: anywhere;
+}
+
+body.dark .passage {
+    color: #887989;
+}
+
+.passage span.correct {
+    color: var(--green);
+}
+
+.passage span.wrong {
+    color: var(--red);
+    background: rgba(230, 110, 110, 0.15);
+    border-radius: 3px;
+}
+
+.passage span.current {
+    background: var(--primary);
+    color: white;
+    border-radius: 3px;
+}
+
+/* INPUT */
+
+textarea {
+    width: 100%;
+    height: 145px;
+    padding: 18px;
+    resize: vertical;
+    border-radius: 17px;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    outline: none;
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(215,123,155,0.1);
+}
+
+textarea:disabled {
+    opacity: 0.7;
+}
+
+/* BUTTONS */
+
+.buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+}
+
+.btn {
+    padding: 13px 20px;
+    border-radius: 13px;
+    border: none;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+}
+
+.btn-secondary {
+    background: var(--soft2);
+    color: var(--text);
+}
+
+.btn-outline {
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+}
+
+.status {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 18px;
+}
+
+/* RESULTS */
+
+.result {
+    display: none;
+    margin-top: 25px;
+    padding: 30px;
+    border-radius: 23px;
+    background: var(--soft);
+    border: 1px solid var(--border);
+    text-align: center;
+    animation: popIn 0.4s ease;
+}
+
+.result h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px;
+    margin-bottom: 12px;
+}
+
+.result .final-speed {
+    font-size: 65px;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.result-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 22px;
+}
+
+.result-box {
+    background: var(--card);
+    padding: 18px;
+    border-radius: 15px;
+}
+
+.result-box h3 {
+    font-size: 25px;
+    color: var(--primary);
+}
+
+.result-box p {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 5px;
+}
+
+.result-message {
+    margin-top: 15px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* HISTORY */
+
+.history-card {
+    margin-top: 25px;
+}
+
+.history-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.history-head h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 25px;
+}
+
+.history-head p {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 5px;
+}
+
+.history-table-wrap {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 500px;
+}
+
+th, td {
+    text-align: left;
+    padding: 14px 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+}
+
+th {
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+}
+
+td {
+    color: var(--text);
+}
+
+.empty-history {
+    padding: 30px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.delete-btn {
+    border: none;
+    color: var(--red);
+    background: var(--soft);
+    border-radius: 8px;
+    padding: 7px 10px;
+}
+
+/* HEART BURST */
+
+#burstContainer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 9999;
+}
+
+.burst-item {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    font-size: 28px;
+    animation: burst 2.4s ease-out forwards;
+}
+
+@keyframes burst {
+    0% {
+        transform: translate(-50%, -50%) scale(0.3) rotate(0deg);
+        opacity: 0;
+    }
+
+    12% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.3);
+    }
+
+    100% {
+        transform: translate(var(--x), var(--y)) rotate(var(--r)) scale(0.8);
+        opacity: 0;
+    }
+}
+
+/* CONFETTI */
+
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 14px;
+    top: -20px;
+    z-index: 9998;
+    pointer-events: none;
+    animation: confettiFall 3s linear forwards;
+}
+
+@keyframes confettiFall {
+    to {
+        transform: translateY(110vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+@keyframes popIn {
+    from {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* FOOTER */
+
+footer {
+    text-align: center;
+    margin-top: 30px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.footer-flower {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+/* MOBILE */
+
+@media(max-width: 700px) {
+    .page {
+        padding: 18px 13px 35px;
+    }
+
+    header {
+        margin-bottom: 25px;
+    }
+
+    .brand h2 {
+        font-size: 20px;
+    }
+
+    .hero {
+        margin-bottom: 25px;
+    }
+
+    .tulips {
+        font-size: 24px;
+        opacity: 0.35;
+    }
+
+    .settings {
+        grid-template-columns: 1fr;
+    }
+
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .card {
+        padding: 18px;
+    }
+
+    .passage-card {
+        padding: 18px;
+    }
+
+    .passage {
+        font-size: 16px;
+        line-height: 2;
+    }
+
+    .result-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .buttons button {
+        flex: 1;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="burstContainer"></div>
+
+<div class="page">
+
+<header>
+    <div class="brand">
+        <div class="brand-icon">🌷</div>
+        <div>
+            <h2>Bloom Typing</h2>
+            <p>YOUR LITTLE SPACE TO GROW</p>
+        </div>
+    </div>
+
+    <button class="theme-btn" id="themeToggle">🌙 Dark Mode</button>
+</header>
+
+<section class="hero">
+    <div class="tulips left">🌷🌸</div>
+    <div class="tulips right">🌸🌷</div>
+
+    <div class="tag">✦ TYPE • LEARN • BLOOM ✦</div>
+
+    <h1>Your typing journey<br><span>starts here.</span></h1>
+
+    <p>Take a moment, find your rhythm, and let your fingers flow.</p>
+</section>
+
+<div class="card">
+
+    <!-- SETTINGS -->
+
+    <div class="settings">
+
+        <div class="setting">
+            <label>✦ DIFFICULTY</label>
+            <select id="difficulty">
+                <option value="easy">Easy</option>
+                <option value="medium" selected>Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+        </div>
+
+        <div class="setting">
+            <label>⏱ TEST DURATION</label>
+            <select id="duration">
+                <option value="15">15 Seconds</option>
+                <option value="30" selected>30 Seconds</option>
+                <option value="60">60 Seconds (1 Minute)</option>
+                <option value="120">120 Seconds (2 Minutes)</option>
+                <option value="300">300 Seconds (5 Minutes)</option>
+                <option value="custom">Custom Time</option>
+            </select>
+        </div>
+
+        <div class="setting" id="customTimeBox" style="display:none;">
+            <label>⏳ CUSTOM SECONDS</label>
+            <input id="customTime" type="number" min="5" max="3600" value="45">
+        </div>
+
+    </div>
+
+    <!-- STATS -->
+
+    <div class="stats">
+
+        <div class="stat">
+            <div class="number" id="timer">30</div>
+            <div class="label">Seconds Left</div>
+        </div>
+
+        <div class="stat">
+            <div class="number" id="wpm">0</div>
+            <div class="label">Words Per Minute</div>
+        </div>
+
+        <div class="stat">
+            <div class="number" id="accuracy">100%</div>
+            <div class="label">Accuracy</div>
+        </div>
+
+        <div class="stat">
+            <div class="number" id="errors">0</div>
+            <div class="label">Mistakes</div>
+        </div>
+
+    </div>
+
+    <div class="progress-wrap">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- PASSAGE -->
+
+    <div class="passage-card">
+
+        <div class="passage-header">
+            <span>✿ Your typing passage</span>
+            <span id="difficultyLabel">MEDIUM</span>
+        </div>
+
+        <div class="passage" id="passage"></div>
+
+    </div>
+
+    <!-- INPUT -->
+
+    <textarea
+        id="typingInput"
+        placeholder="Start typing here... your timer begins with your first keystroke ♡"
+        spellcheck="false"
+        autocomplete="off"
+        autocorrect="off"
+    ></textarea>
+
+    <!-- BUTTONS -->
+
+    <div class="buttons">
+
+        <button class="btn btn-primary" id="restartBtn">
+            ↻ Restart Test
+        </button>
+
+        <button class="btn btn-secondary" id="newPassageBtn">
+            🌷 New Passage
+        </button>
+
+    </div>
+
+    <div class="status" id="status">
+        Choose your difficulty and time, then start typing.
+    </div>
+
+    <!-- RESULT -->
+
+    <div class="result" id="result">
+
+        <h2>Look at you, blooming! 🌷</h2>
+
+        <div class="final-speed" id="finalWpm">0</div>
+
+        <p>Words per minute</p>
+
+        <div class="result-grid">
+
+            <div class="result-box">
+                <h3 id="finalAccuracy">0%</h3>
+                <p>Accuracy</p>
+            </div>
+
+            <div class="result-box">
+                <h3 id="finalErrors">0</h3>
+                <p>Mistakes</p>
+            </div>
+
+            <div class="result-box">
+                <h3 id="finalCharacters">0</h3>
+                <p>Characters Typed</p>
+            </div>
+
+        </div>
+
+        <p class="result-message" id="resultMessage"></p>
+
+    </div>
+
+</div>
+
+<!-- HISTORY -->
+
+<div class="card history-card">
+
+    <div class="history-head">
+
+        <div>
+            <h2>📖 Your Typing History</h2>
+            <p>Every practice session is a little progress.</p>
+        </div>
+
+        <button class="btn btn-outline" id="clearHistoryBtn">
+            🗑 Clear History
+        </button>
+
+    </div>
+
+    <div class="history-table-wrap" id="historyContainer"></div>
+
+</div>
+
+<footer>
+    <div class="footer-flower">🌷 ♡ 🌷</div>
+    Made with love, patience & a little bit of pink.
+</footer>
+
+</div>
+
+<script>
+
+// ===================================
+// PASSAGES
+// ===================================
+
+const passages = {
+
+easy: [
+    "The sun is shining and the sky is blue. Birds sing in the trees and flowers bloom in the garden. Every morning brings a new chance to smile and enjoy the little things in life.",
+    
+    "I love reading books, listening to music, and spending time with my friends. A happy heart makes an ordinary day feel special. Kindness is a beautiful gift we can share with everyone.",
+    
+    "Learning something new is always exciting. Take your time, practice every day, and believe in yourself. Small steps can help you reach big dreams."
+],
+
+medium: [
+    "Success does not happen overnight. It requires patience, dedication, consistency, and the courage to continue even when things become difficult. Every small improvement brings us closer to our goals.",
+    
+    "Technology has transformed the way people communicate, learn, work, and explore the world. Digital tools provide opportunities to discover information, develop new skills, and connect with people across different countries.",
+    
+    "A peaceful morning, a warm cup of tea, and a few moments of silence can make an ordinary day feel extraordinary. Sometimes happiness is hidden in the simplest experiences that we often overlook."
+],
+
+hard: [
+    "Creativity flourishes when curiosity meets determination. Instead of accepting every limitation, innovative thinkers question assumptions, experiment with possibilities, and transform unexpected challenges into meaningful opportunities for growth.",
+    
+    "Effective communication requires more than expressing thoughts clearly; it involves listening carefully, understanding different perspectives, and responding thoughtfully. Respectful conversations strengthen relationships and encourage collaborative problem-solving.",
+    
+    "In an increasingly interconnected society, technological advancement creates remarkable opportunities while introducing complex responsibilities. Developing digital awareness, critical thinking, and adaptability enables individuals to navigate change with confidence."
+]
+
+};
+
+// ===================================
+// VARIABLES
+// ===================================
+
+let currentPassage = "";
+let currentDifficulty = "medium";
+
+let totalTime = 30;
+let timeLeft = 30;
+
+let timer = null;
+let started = false;
+let finished = false;
+
+let history = JSON.parse(localStorage.getItem("bloomTypingHistory") || "[]");
+
+const passageElement = document.getElementById("passage");
+const typingInput = document.getElementById("typingInput");
+const difficultySelect = document.getElementById("difficulty");
+const durationSelect = document.getElementById("duration");
+const customTimeInput = document.getElementById("customTime");
+const resultBox = document.getElementById("result");
+
+// ===================================
+// THEME
+// ===================================
+
+const themeToggle = document.getElementById("themeToggle");
+
+function applyTheme(theme) {
+    document.body.classList.toggle("dark", theme === "dark");
+    themeToggle.textContent = theme === "dark"
+        ? "☀️ Light Mode"
+        : "🌙 Dark Mode";
+
+    localStorage.setItem("bloomTypingTheme", theme);
+}
+
+themeToggle.addEventListener("click", () => {
+    const isDark = document.body.classList.contains("dark");
+    applyTheme(isDark ? "light" : "dark");
+});
+
+applyTheme(localStorage.getItem("bloomTypingTheme") || "light");
+
+// ===================================
+// TIME SETTINGS
+// ===================================
+
+function getSelectedTime() {
+    if (durationSelect.value === "custom") {
+        const custom = parseInt(customTimeInput.value);
+
+        if (isNaN(custom) || custom < 5) return 5;
+
+        return Math.min(custom, 3600);
+    }
+
+    return parseInt(durationSelect.value);
+}
+
+durationSelect.addEventListener("change", () => {
+
+    document.getElementById("customTimeBox").style.display =
+        durationSelect.value === "custom" ? "block" : "none";
+
+    restartTest();
+});
+
+customTimeInput.addEventListener("change", restartTest);
+
+// ===================================
+// DIFFICULTY
+// ===================================
+
+difficultySelect.addEventListener("change", () => {
+
+    currentDifficulty = difficultySelect.value;
+
+    document.getElementById("difficultyLabel").textContent =
+        currentDifficulty.toUpperCase();
+
+    newPassage();
+});
+
+// ===================================
+// RANDOM PASSAGE
+// ===================================
+
+function choosePassage() {
+
+    const list = passages[currentDifficulty];
+
+    currentPassage = list[Math.floor(Math.random() * list.length)];
+
+}
+
+function displayPassage() {
+
+    passageElement.innerHTML = "";
+
+    currentPassage.split("").forEach((character, index) => {
+
+        const span = document.createElement("span");
+
+        span.textContent = character;
+        span.id = "character-" + index;
+
+        passageElement.appendChild(span);
+
+    });
+
+}
+
+// ===================================
+// RESTART
+// ===================================
+
+function restartTest() {
+
+    clearInterval(timer);
+
+    totalTime = getSelectedTime();
+    timeLeft = totalTime;
+
+    started = false;
+    finished = false;
+
+    typingInput.disabled = false;
+    typingInput.value = "";
+
+    document.getElementById("timer").textContent = timeLeft;
+    document.getElementById("wpm").textContent = "0";
+    document.getElementById("accuracy").textContent = "100%";
+    document.getElementById("errors").textContent = "0";
+
+    document.getElementById("progressBar").style.width = "0%";
+
+    resultBox.style.display = "none";
+
+    document.getElementById("status").textContent =
+        "Your timer starts as soon as you begin typing.";
+
+    displayPassage();
+
+    typingInput.focus();
+}
+
+// ===================================
+// NEW PASSAGE
+// ===================================
+
+function newPassage() {
+
+    choosePassage();
+    restartTest();
+
+}
+
+// ===================================
+// TIMER
+// ===================================
+
+function startTimer() {
+
+    started = true;
+
+    timer = setInterval(() => {
+
+        timeLeft--;
+
+        document.getElementById("timer").textContent = timeLeft;
+
+        updateStats();
+
+        if (timeLeft <= 0) {
+            finishTest();
+        }
+
+    }, 1000);
+
+}
+
+// ===================================
+// INPUT
+// ===================================
+
+typingInput.addEventListener("input", () => {
+
+    if (finished) return;
+
+    if (!started && typingInput.value.length > 0) {
+        startTimer();
+    }
+
+    updateStats();
+
+    if (typingInput.value.length >= currentPassage.length) {
+        finishTest();
+    }
+
+});
+
+// ===================================
+// PASSAGE CHECKING
+// ===================================
+
+function checkCharacters() {
+
+    const typedText = typingInput.value;
+
+    let correct = 0;
+    let errors = 0;
+
+    currentPassage.split("").forEach((character, index) => {
+
+        const span = document.getElementById("character-" + index);
+
+        span.className = "";
+
+        if (index < typedText.length) {
+
+            if (typedText[index] === character) {
+
+                span.classList.add("correct");
+                correct++;
+
+            } else {
+
+                span.classList.add("wrong");
+                errors++;
+
+            }
+
+        } else if (index === typedText.length) {
+
+            span.classList.add("current");
+
+        }
+
+    });
+
+    return { correct, errors };
+
+}
+
+// ===================================
+// STATS
+// ===================================
+
+function calculateStats() {
+
+    const typedText = typingInput.value;
+
+    const { correct, errors } = checkCharacters();
+
+    const elapsed = Math.max(0, totalTime - timeLeft);
+
+    const minutes = elapsed / 60;
+
+    const wpm = minutes > 0
+        ? Math.round((correct / 5) / minutes)
+        : 0;
+
+    const accuracy = typedText.length > 0
+        ? Math.round((correct / typedText.length) * 100)
+        : 100;
+
+    const progress = currentPassage.length > 0
+        ? Math.min((typedText.length / currentPassage.length) * 100, 100)
+        : 0;
+
+    return {
+        correct,
+        errors,
+        wpm,
+        accuracy,
+        progress,
+        typedText,
+        elapsed
+    };
+
+}
+
+function updateStats() {
+
+    const stats = calculateStats();
+
+    document.getElementById("wpm").textContent = stats.wpm;
+
+    document.getElementById("accuracy").textContent =
+        stats.accuracy + "%";
+
+    document.getElementById("errors").textContent = stats.errors;
+
+    document.getElementById("progressBar").style.width =
+        stats.progress + "%";
+
+}
+
+// ===================================
+// FINISH
+// ===================================
+
+function finishTest() {
+
+    if (finished) return;
+
+    finished = true;
+
+    clearInterval(timer);
+
+    typingInput.disabled = true;
+
+    const stats = calculateStats();
+
+    document.getElementById("finalWpm").textContent = stats.wpm;
+
+    document.getElementById("finalAccuracy").textContent =
+        stats.accuracy + "%";
+
+    document.getElementById("finalErrors").textContent =
+        stats.errors;
+
+    document.getElementById("finalCharacters").textContent =
+        stats.typedText.length;
+
+    document.getElementById("resultMessage").textContent =
+        getMessage(stats.wpm);
+
+    resultBox.style.display = "block";
+
+    document.getElementById("status").textContent =
+        "Test complete! Your results have been saved.";
+
+    saveHistory(stats);
+
+    createHeartBurst();
+
+    createConfetti();
+
+    resultBox.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+
+}
+
+// ===================================
+// RESULT MESSAGES
+// ===================================
+
+function getMessage(wpm) {
+
+    if (wpm < 20)
+        return "A lovely start! Keep practicing and your speed will grow. 🌱";
+
+    if (wpm < 35)
+        return "Nice progress! You're finding your typing rhythm. 🌷";
+
+    if (wpm < 50)
+        return "Wonderful work! Your typing is getting smoother. 💗";
+
+    if (wpm < 70)
+        return "Amazing speed! You're doing really well. ✨";
+
+    return "Incredible typing speed! Keep blooming and keep growing. 🌸";
+
+}
+
+// ===================================
+// SAVE HISTORY
+// ===================================
+
+function saveHistory(stats) {
+
+    const entry = {
+        id: Date.now(),
+        date: new Date().toLocaleString(),
+        difficulty: currentDifficulty,
+        duration: totalTime,
+        wpm: stats.wpm,
+        accuracy: stats.accuracy,
+        errors: stats.errors
+    };
+
+    history.unshift(entry);
+
+    // Keep the latest 50 sessions
+    history = history.slice(0, 50);
+
+    localStorage.setItem("bloomTypingHistory", JSON.stringify(history));
+
+    renderHistory();
+
+}
+
+// ===================================
+// RENDER HISTORY
+// ===================================
+
+function renderHistory() {
+
+    const container = document.getElementById("historyContainer");
+
+    if (history.length === 0) {
+
+        container.innerHTML = `
+            <div class="empty-history">
+                🌷 No typing history yet.<br>
+                Complete your first typing test to see your results here!
+            </div>
+        `;
+
+        return;
+
+    }
+
+    let html = `
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Level</th>
+                    <th>Time</th>
+                    <th>WPM</th>
+                    <th>Accuracy</th>
+                    <th>Errors</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    history.forEach(entry => {
+
+        html += `
+            <tr>
+                <td>${escapeHTML(entry.date)}</td>
+                <td>${escapeHTML(entry.difficulty)}</td>
+                <td>${entry.duration}s</td>
+                <td><strong>${entry.wpm}</strong></td>
+                <td>${entry.accuracy}%</td>
+                <td>${entry.errors}</td>
+                <td>
+                    <button class="delete-btn" onclick="deleteHistory(${entry.id})">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        `;
+
+    });
+
+    html += `
+            </tbody>
+        </table>
+    `;
+
+    container.innerHTML = html;
+
+}
+
+// ===================================
+// DELETE SINGLE HISTORY
+// ===================================
+
+function deleteHistory(id) {
+
+    history = history.filter(entry => entry.id !== id);
+
+    localStorage.setItem("bloomTypingHistory", JSON.stringify(history));
+
+    renderHistory();
+
+}
+
+// ===================================
+// CLEAR ALL HISTORY
+// ===================================
+
+document.getElementById("clearHistoryBtn").addEventListener("click", () => {
+
+    if (history.length === 0) {
+        alert("Your history is already empty.");
+        return;
+    }
+
+    const confirmDelete = confirm("Are you sure you want to clear all typing history?");
+
+    if (confirmDelete) {
+
+        history = [];
+
+        localStorage.removeItem("bloomTypingHistory");
+
+        renderHistory();
+
+    }
+
+});
+
+// ===================================
+// SAFE HTML
+// ===================================
+
+function escapeHTML(text) {
+
+    return String(text).replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+    }[character]));
+
+}
+
+// ===================================
+// HEART BURST
+// ===================================
+
+function createHeartBurst() {
+
+    const container = document.getElementById("burstContainer");
+
+    const hearts = [
+        "💗", "💖", "💕", "💘", "💝",
+        "❤️", "🩷", "💜", "💙", "💛",
+        "🌷", "🌸", "✨", "💫", "🦋"
+    ];
+
+    for (let i = 0; i < 55; i++) {
+
+        const heart = document.createElement("div");
+
+        heart.className = "burst-item";
+
+        heart.textContent =
+            hearts[Math.floor(Math.random() * hearts.length)];
+
+        const angle = Math.random() * Math.PI * 2;
+
+        const distance = 180 + Math.random() * 450;
+
+        const x = Math.cos(angle) * distance;
+        const y = Math.sin(angle) * distance;
+
+        heart.style.setProperty("--x", x + "px");
+        heart.style.setProperty("--y", y + "px");
+
+        heart.style.setProperty(
+            "--r",
+            (Math.random() * 700 - 350) + "deg"
+        );
+
+        heart.style.animationDelay =
+            (Math.random() * 0.4) + "s";
+
+        container.appendChild(heart);
+
+        setTimeout(() => heart.remove(), 3000);
+
+    }
+
+}
+
+// ===================================
+// CONFETTI
+// ===================================
+
+function createConfetti() {
+
+    const colors = [
+        "#ff9ebc",
+        "#d9a7e8",
+        "#ffcc80",
+        "#a8e6cf",
+        "#ffd3e2",
+        "#c5b3f2",
+        "#ffb3a7"
+    ];
+
+    for (let i = 0; i < 90; i++) {
+
+        const piece = document.createElement("div");
+
+        piece.className = "confetti";
+
+        piece.style.left = Math.random() * 100 + "vw";
+
+        piece.style.background =
+            colors[Math.floor(Math.random() * colors.length)];
+
+        piece.style.borderRadius =
+            Math.random() > 0.5 ? "50%" : "2px";
+
+        piece.style.animationDuration =
+            (2 + Math.random() * 2) + "s";
+
+        piece.style.animationDelay =
+            (Math.random() * 0.8) + "s";
+
+        document.body.appendChild(piece);
+
+        setTimeout(() => piece.remove(), 5000);
+
+    }
+
+}
+
+// ===================================
+// BUTTONS
+// ===================================
+
+document.getElementById("restartBtn").addEventListener("click", restartTest);
+
+document.getElementById("newPassageBtn").addEventListener("click", newPassage);
+
+// ===================================
+// INITIALIZATION
+// ===================================
+
+choosePassage();
+
+restartTest();
+
+renderHistory();
+
+</script>
+
+</body>
+</html>
+
